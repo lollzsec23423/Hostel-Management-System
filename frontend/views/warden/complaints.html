@@ -1,0 +1,92 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Warden Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/warden/dashboard">Overview</a></li>
+            <li><a href="#!/warden/rooms">Room Status</a></li>
+            <li><a href="#!/warden/bookings">Room Bookings</a></li>
+            <li><a href="#!/warden/complaints" class="active">Complaints</a></li>
+            <li><a href="#!/warden/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Manage Complaints</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+            <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Category</th>
+                                <th>Issue</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="c in complaints">
+                                <td>
+                                    <strong>{{ c.student_name }}</strong><br>
+                                    <span style="font-size: 0.8rem; color: #6b7280;">{{ c.email }}</span>
+                                </td>
+                                <td>{{ c.category }}</td>
+                                <td style="max-width: 300px;">
+                                    <strong>{{ c.title }}</strong><br>
+                                    <span style="font-size: 0.85rem; color: #4b5563;">{{ c.description }}</span>
+                                </td>
+                                <td>{{ c.created_at | date:'mediumDate' }}</td>
+                                <td>
+                                    <select class="form-control" ng-model="c.status"
+                                        ng-change="updateStatus(c.id, c.status, c.resolution_comment)"
+                                        style="padding: 5px; font-size: 0.85rem; width: auto;"
+                                        ng-class="{'bg-warning': c.status === 'Pending', 'bg-primary': c.status === 'In Progress', 'bg-success': c.status === 'Resolved'}">
+                                        <option value="Pending">Pending</option>
+                                        <option value="In Progress">In Progress</option>
+                                        <option value="Resolved">Resolved</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <button class="btn" style="padding: 4px 8px; width: auto; font-size: 0.85rem;"
+                                        ng-click="openReplyModal(c)">Reply</button>
+                                </td>
+                            </tr>
+                            <tr ng-if="complaints.length === 0">
+                                <td colspan="6" style="text-align: center;">No complaints found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Simple inline reply section instead of modal for UI simplicity -->
+            <div class="card" ng-show="selectedComplaint" style="border-left: 4px solid var(--primary-color);">
+                <h3 class="card-title">Reply to: {{ selectedComplaint.title }}</h3>
+                <form ng-submit="submitReply()">
+                    <div class="form-group">
+                        <textarea class="form-control" rows="3" ng-model="replyText" required
+                            placeholder="Enter resolution comment for student..."></textarea>
+                    </div>
+                    <button type="submit" class="btn" style="width: auto;">Submit Reply & Set Resolved</button>
+                    <button type="button" class="btn" style="width: auto; background-color: #9ca3af;"
+                        ng-click="selectedComplaint = null">Cancel</button>
+                </form>
+            </div>
+
+        </div>
+    </main>
+</div>

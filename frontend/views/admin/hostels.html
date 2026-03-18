@@ -1,0 +1,116 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Admin Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li><a href="#!/admin/hostels" class="active">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Manage Hostels & Rooms</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+            <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+            <div class="grid grid-cols-2">
+                <!-- Hostels List -->
+                <div class="card">
+                    <h3 class="card-title">Hostels</h3>
+                    <div class="table-responsive">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Name</th>
+                                    <th>Type</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="h in hostels" style="cursor: pointer;" ng-click="selectHostel(h.id)"
+                                    ng-style="selectedHostelId === h.id ? {'background-color': '#f3f4f6'} : {}">
+                                    <td>{{ h.id }}</td>
+                                    <td>{{ h.name }}</td>
+                                    <td>
+                                        <span class="badge"
+                                            ng-class="{'badge-primary': h.type==='Boys', 'badge-success': h.type==='Girls'}">{{
+                                            h.type }}</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Add Room Form -->
+                <div class="card" ng-if="selectedHostelId">
+                    <h3 class="card-title">Add Room to selected Hostel</h3>
+                    <form ng-submit="addRoom()">
+                        <div class="form-group">
+                            <label>Room Number</label>
+                            <input type="text" class="form-control" ng-model="newRoom.room_number" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Capacity</label>
+                            <input type="number" class="form-control" ng-model="newRoom.capacity" min="1" max="6"
+                                required>
+                        </div>
+                        <button type="submit" class="btn">Add Room</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Rooms List -->
+            <div class="card" ng-if="selectedHostelId">
+                <h3 class="card-title">Rooms in Selected Hostel</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Capacity</th>
+                                <th>Available Seats</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="r in rooms">
+                                <td>{{ r.room_number }}</td>
+                                <td>{{ r.capacity }}</td>
+                                <td>{{ r.capacity - r.occupied_seats }}</td>
+                                <td>
+                                    <span class="badge"
+                                        ng-class="r.status === 'Available' ? 'badge-success' : (r.status === 'Full' ? 'badge-danger' : 'badge-warning')">
+                                        {{ r.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn"
+                                        style="background-color: var(--danger); padding: 4px 8px; width: auto;"
+                                        ng-click="deleteRoom(r.id)">Delete</button>
+                                </td>
+                            </tr>
+                            <tr ng-if="rooms.length === 0">
+                                <td colspan="5" style="text-align: center;">No rooms available.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>

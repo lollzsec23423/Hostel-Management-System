@@ -1,0 +1,50 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Admin Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard" class="active">Overview</a></li>
+            <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Welcome, Administrator</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <h2 class="card-title">System Overview</h2>
+
+            <div class="grid grid-cols-2">
+                <div class="card" style="border-left: 4px solid var(--primary-color);">
+                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Total Students</h3>
+                    <p style="font-size: 2rem; font-weight: 700; margin-top: 10px;">{{ stats.totalStudents || 0 }}</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--success);">
+                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Total Rooms</h3>
+                    <p style="font-size: 2rem; font-weight: 700; margin-top: 10px;">{{ stats.totalRooms || 0 }}</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px;">
+                <h3 class="card-title">Quick Actions</h3>
+                <div class="grid grid-cols-1">
+                    <button class="btn" style="background-color: var(--primary-color);"
+                        onclick="location.href='#!/admin/hostels'">Manage Hostels</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

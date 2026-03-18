@@ -1,0 +1,107 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Mess Owner Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/mess-owner/dashboard">Overview</a></li>
+            <li><a href="#!/mess-owner/menu" class="active">Mess Menu</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Mess Menu Dashboard</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+            <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+            <div class="grid grid-cols-2">
+                <!-- Add Menu -->
+                <div class="card">
+                    <h3 class="card-title">Add/Update Menu</h3>
+                    <form ng-submit="addMenu()">
+                        <div class="form-group">
+                            <label>Menu Cycle Day (1 to 14)</label>
+                            <select class="form-control" ng-model="menuData.day_number" required>
+                                <option value="1">Day 1 (Mon)</option>
+                                <option value="2">Day 2 (Tue)</option>
+                                <option value="3">Day 3 (Wed)</option>
+                                <option value="4">Day 4 (Thu)</option>
+                                <option value="5">Day 5 (Fri)</option>
+                                <option value="6">Day 6 (Sat)</option>
+                                <option value="7">Day 7 (Sun)</option>
+                                <option value="8">Day 8 (Mon)</option>
+                                <option value="9">Day 9 (Tue)</option>
+                                <option value="10">Day 10 (Wed)</option>
+                                <option value="11">Day 11 (Thu)</option>
+                                <option value="12">Day 12 (Fri)</option>
+                                <option value="13">Day 13 (Sat)</option>
+                                <option value="14">Day 14 (Sun)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Meal Type</label>
+                            <select class="form-control" ng-model="menuData.meal_type" required>
+                                <option value="Breakfast">Breakfast</option>
+                                <option value="Lunch">Lunch</option>
+                                <option value="Dinner">Dinner</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Menu Items</label>
+                            <textarea class="form-control" rows="3" ng-model="menuData.items" required
+                                placeholder="E.g. Roti, Dal, Rice..."></textarea>
+                        </div>
+                        <button type="submit" class="btn">Save Menu</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Existing Menu -->
+            <div class="card" style="margin-top: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 class="card-title" style="margin-bottom: 0;">Current 14-Day Cycle Menu</h3>
+                    <select class="form-control" ng-model="selectedDayFilter" style="width: auto; margin-bottom: 0;">
+                        <option value="">-- View All Days --</option>
+                        <option ng-repeat="day in groupedMenu" value="{{day.day_number}}">
+                            {{ day.date | date:'shortDate' }} (Day {{day.day_number}})
+                        </option>
+                    </select>
+                </div>
+
+                <div ng-repeat="day in groupedMenu | filter:(selectedDayFilter ? {day_number: selectedDayFilter}: '')"
+                    style="margin-bottom: 25px;">
+                    <h4
+                        style="border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; margin-bottom: 15px; color: var(--primary-color);">
+                        {{ day.date | date:'fullDate' }} (Cycle Day {{ day.day_number }})
+                    </h4>
+                    <div class="grid grid-cols-3">
+                        <div class="card" ng-repeat="m in day.meals | orderBy: 'meal_type'"
+                            style="box-shadow: none; border: 1px solid #e5e7eb; padding: 15px;">
+                            <div
+                                style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
+                                <div style="font-weight: 600; font-size: 1.1rem; color: var(--primary-color);">{{
+                                    m.meal_type }}</div>
+                                <button class="btn"
+                                    style="background-color: transparent; color: var(--danger); padding: 0; width: auto;"
+                                    ng-click="deleteMenu(m.id)">&times;</button>
+                            </div>
+                            <p style="font-size: 0.95rem; white-space: pre-wrap;">{{ m.items }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div ng-if="groupedMenu.length === 0">
+                    <p>No menu data available.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>

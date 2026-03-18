@@ -1,0 +1,90 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Create an Account</h2>
+        <p>Register as a member of SVKM NMIMS Hostels</p>
+
+        <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+        <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+        <form ng-submit="doRegister()">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" class="form-control" ng-model="registerData.name" required placeholder="John Doe">
+            </div>
+
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control" ng-model="registerData.email" required
+                    placeholder="john@nmims.edu">
+            </div>
+
+            <div class="form-group">
+                <label>Course</label>
+                <select class="form-control" ng-model="registerData.course" required>
+                    <option value="None">None (Admin/Faculty)</option>
+                    <option value="MBA Tech">MBA Tech</option>
+                    <option value="B.Tech CE">B.Tech CE</option>
+                    <option value="B.Tech AIML">B.Tech AIML</option>
+                    <option value="B.Tech Data Science">B.Tech Data Science</option>
+                    <option value="B.Tech CS">B.Tech CS</option>
+                    <option value="Pharmacy">Pharmacy</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Gender</label>
+                <select class="form-control" ng-model="registerData.gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Year of Study</label>
+                <select class="form-control" ng-model="registerData.year_of_study" required>
+                    <option value="1">First Year (1st Yr)</option>
+                    <option value="2">Second Year (2nd Yr)</option>
+                    <option value="3">Third Year (3rd Yr)</option>
+                    <option value="4">Fourth Year (4th Yr)</option>
+                    <option value="5">Fifth Year (5th Yr)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Role</label>
+                <select class="form-control" ng-model="registerData.role" required>
+                    <option value="Student">Student</option>
+                    <option value="Warden">Warden</option>
+                    <option value="Mess Owner">Mess Owner</option>
+                </select>
+            </div>
+
+            <div class="form-group" ng-if="registerData.role === 'Warden'">
+                <label>Assigned Hostel ID (For Wardens)</label>
+                <input type="number" class="form-control" ng-model="registerData.hostel_id"
+                    placeholder="Hostel ID e.g., 1">
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="{{ showPassword ? 'text' : 'password' }}" class="form-control"
+                    ng-model="registerData.password" required placeholder="Create a strong password">
+                <div style="margin-top: 8px; display: flex; align-items: center;">
+                    <input type="checkbox" id="showPwd" ng-model="showPassword"
+                        style="width: auto; margin-right: 8px; cursor: pointer;">
+                    <label for="showPwd"
+                        style="margin-bottom: 0; font-weight: normal; font-size: 0.9em; cursor: pointer;">Show
+                        Password</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" ng-disabled="loading">
+                {{ loading ? 'Registering...' : 'Register' }}
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p>Already have an account? <a href="#!/login">Sign in</a></p>
+        </div>
+    </div>
+</div>

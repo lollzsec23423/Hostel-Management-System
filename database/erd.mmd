@@ -1,0 +1,84 @@
+erDiagram
+    users {
+        INT id PK
+        VARCHAR name
+        VARCHAR email UK
+        VARCHAR password
+        ENUM role
+        ENUM course
+        ENUM gender
+        INT year_of_study
+        INT hostel_id FK
+        TIMESTAMP created_at
+    }
+
+    hostels {
+        INT id PK
+        VARCHAR name
+        ENUM type
+        TIMESTAMP created_at
+    }
+
+    rooms {
+        INT id PK
+        INT hostel_id FK
+        VARCHAR room_number
+        INT capacity
+        INT occupied_seats
+        ENUM status
+    }
+
+    room_bookings {
+        INT id PK
+        INT student_id FK
+        INT room_id FK
+        ENUM status
+        TIMESTAMP created_at
+    }
+
+    mess_menu {
+        INT id PK
+        DATE menu_date
+        ENUM meal_type
+        TEXT items
+        TIMESTAMP created_at
+    }
+
+    mess_attendance {
+        INT id PK
+        INT student_id FK
+        DATE attendance_date
+        ENUM meal_type
+        TIMESTAMP marked_at
+    }
+
+    complaints {
+        INT id PK
+        INT student_id FK
+        ENUM category
+        VARCHAR title
+        TEXT description
+        VARCHAR image_url
+        ENUM status
+        TEXT resolution_comment
+        TIMESTAMP created_at
+    }
+
+    outings {
+        INT id PK
+        INT student_id FK
+        VARCHAR destination
+        TEXT reason
+        DATETIME departure_date
+        DATETIME return_date
+        ENUM status
+        TIMESTAMP created_at
+    }
+
+    hostels ||--o{ users : "staffs/houses"
+    hostels ||--o{ rooms : "contains"
+    users ||--o{ room_bookings : "makes"
+    rooms ||--o{ room_bookings : "has"
+    users ||--o{ mess_attendance : "marks"
+    users ||--o{ complaints : "raises"
+    users ||--o{ outings : "requests"

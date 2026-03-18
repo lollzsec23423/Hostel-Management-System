@@ -1,0 +1,52 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Warden Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/warden/dashboard" class="active">Overview</a></li>
+            <li><a href="#!/warden/rooms">Room Status</a></li>
+            <li><a href="#!/warden/bookings">Room Bookings</a></li>
+            <li><a href="#!/warden/complaints">Complaints</a></li>
+            <li><a href="#!/warden/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Welcome, {{ currentUser.name }} (Warden)</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <h2 class="card-title">Warden Overview</h2>
+
+            <div class="grid grid-cols-2">
+                <div class="card" style="border-left: 4px solid var(--warning);">
+                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Manage Bookings</h3>
+                    <p style="font-size: 1rem; margin-top: 10px;">Review and approve room requests for your hostel.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--danger);">
+                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Resolve Complaints</h3>
+                    <p style="font-size: 1rem; margin-top: 10px;">Reply to student grievances directly.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px;">
+                <h3 class="card-title">Quick Actions</h3>
+                <div class="grid grid-cols-2">
+                    <button class="btn" style="background-color: var(--warning);"
+                        onclick="location.href='#!/warden/bookings'">Review Bookings</button>
+                    <button class="btn" style="background-color: var(--danger);"
+                        onclick="location.href='#!/warden/complaints'">Resolve Complaints</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

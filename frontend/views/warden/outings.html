@@ -1,0 +1,133 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Warden Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/warden/dashboard">Overview</a></li>
+            <li><a href="#!/warden/rooms">Room Status</a></li>
+            <li><a href="#!/warden/bookings">Room Bookings</a></li>
+            <li><a href="#!/warden/complaints">Complaints</a></li>
+            <li><a href="#!/warden/outings" class="active">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Outing Management</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 class="card-title" style="margin-bottom: 0;">Student Outing Requests</h3>
+
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <span style="font-size: 0.9rem; color: #4b5563;">Filter:</span>
+                        <select ng-model="filterStatus"
+                            style="padding: 6px 12px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 0.9rem; outline: none;">
+                            <option value="All">All</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                            <option value="Completed">Completed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+                <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+                <div style="overflow-x: auto;">
+                    <table
+                        style="width: 100%; border-collapse: collapse; text-align: left; border: 1px solid #e5e7eb; border-radius: 8px;">
+                        <thead>
+                            <tr style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                                <th
+                                    style="padding: 12px 15px; font-weight: 600; font-size: 0.85rem; color: #4b5563; text-transform: uppercase;">
+                                    Student</th>
+                                <th
+                                    style="padding: 12px 15px; font-weight: 600; font-size: 0.85rem; color: #4b5563; text-transform: uppercase;">
+                                    Course & Year</th>
+                                <th
+                                    style="padding: 12px 15px; font-weight: 600; font-size: 0.85rem; color: #4b5563; text-transform: uppercase;">
+                                    Destination</th>
+                                <th
+                                    style="padding: 12px 15px; font-weight: 600; font-size: 0.85rem; color: #4b5563; text-transform: uppercase;">
+                                    Duration</th>
+                                <th
+                                    style="padding: 12px 15px; font-weight: 600; font-size: 0.85rem; color: #4b5563; text-transform: uppercase;">
+                                    Status</th>
+                                <th
+                                    style="padding: 12px 15px; font-weight: 600; font-size: 0.85rem; color: #4b5563; text-transform: uppercase;">
+                                    Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-if="outings.length === 0">
+                                <td colspan="6" style="padding: 20px; text-align: center; color: #6b7280;">No outing
+                                    requests found.</td>
+                            </tr>
+                            <tr ng-repeat="outing in outings"
+                                ng-if="filterStatus === 'All' || outing.status === filterStatus"
+                                style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 12px 15px;">
+                                    <div style="font-weight: 500; color: #111827;">{{ outing.student_name }}</div>
+                                    <div style="font-size: 0.85rem; color: #6b7280;">{{ outing.student_email }}</div>
+                                </td>
+                                <td style="padding: 12px 15px; font-size: 0.9rem; color: #4b5563;">
+                                    {{ outing.course }} <br> Year {{ outing.year_of_study }}
+                                </td>
+                                <td style="padding: 12px 15px;">
+                                    <div style="font-weight: 500; color: #111827;">{{ outing.destination }}</div>
+                                    <div style="font-size: 0.8rem; color: #6b7280; margin-top: 4px; max-width: 200px;">
+                                        {{ outing.reason }}</div>
+                                </td>
+                                <td style="padding: 12px 15px; font-size: 0.85rem; color: #4b5563;">
+                                    <div style="margin-bottom: 4px;"><strong>From:</strong> {{ outing.departure_date |
+                                        date:'short' }}</div>
+                                    <div><strong>To:</strong> {{ outing.return_date | date:'short' }}</div>
+                                </td>
+                                <td style="padding: 12px 15px;">
+                                    <span class="badge" ng-class="{
+                                              'badge-warning': outing.status === 'Pending', 
+                                              'badge-success': outing.status === 'Approved',
+                                              'badge-danger': outing.status === 'Rejected',
+                                              'badge-primary': outing.status === 'Completed'
+                                          }">
+                                        {{ outing.status }}
+                                    </span>
+                                </td>
+                                <td style="padding: 12px 15px;">
+                                    <div ng-if="outing.status === 'Pending'" style="display: flex; gap: 5px;">
+                                        <button class="btn"
+                                            style="background-color: #10b981; padding: 6px 10px; font-size: 0.85rem;"
+                                            ng-click="updateStatus(outing.id, 'Approved')">Approve</button>
+                                        <button class="btn"
+                                            style="background-color: #ef4444; padding: 6px 10px; font-size: 0.85rem;"
+                                            ng-click="updateStatus(outing.id, 'Rejected')">Reject</button>
+                                    </div>
+                                    <div ng-if="outing.status === 'Approved'" style="display: flex; gap: 5px;">
+                                        <button class="btn"
+                                            style="background-color: #3b82f6; padding: 6px 10px; font-size: 0.85rem;"
+                                            ng-click="updateStatus(outing.id, 'Completed')">Mark Completed</button>
+                                    </div>
+                                    <span ng-if="outing.status === 'Rejected' || outing.status === 'Completed'"
+                                        style="font-size: 0.85rem; color: #9ca3af; font-style: italic;">
+                                        No actions
+                                    </span>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

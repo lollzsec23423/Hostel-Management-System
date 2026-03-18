@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="hostelApp">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVKM NMIMS Hostel Management System</title>
+
+    <!-- Google Fonts for Modern Typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body ng-controller="MainController">
+
+    <!-- dynamic views will be loaded here -->
+    <div ng-view></div>
+
+    <!-- AngularJS 1.8.3 -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular-route.min.js"></script>
+
+    <!-- Chart.js for Bonus Feature -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- App Scripts -->
+    <script src="js/app.js"></script>
+    <script src="js/services/authService.js"></script>
+    <script src="js/controllers/authController.js"></script>
+    <script src="js/controllers/studentController.js"></script>
+    <script src="js/controllers/adminController.js"></script>
+    <script src="js/controllers/wardenController.js"></script>
+    <script src="js/controllers/messOwnerController.js"></script>
+</body>
+
+</html>

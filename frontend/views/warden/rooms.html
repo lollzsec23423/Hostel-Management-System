@@ -1,0 +1,99 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Warden Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/warden/dashboard">Overview</a></li>
+            <li><a href="#!/warden/rooms" class="active">Room Status</a></li>
+            <li><a href="#!/warden/bookings">Room Bookings</a></li>
+            <li><a href="#!/warden/complaints">Complaints</a></li>
+            <li><a href="#!/warden/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Room Status & Occupancy</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <h2 class="card-title">Hostel Occupancy Overview</h2>
+
+            <!-- Quick Stats -->
+            <div class="grid grid-cols-4" style="margin-bottom: 30px;">
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--primary);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Total Rooms</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.totalRooms}}</p>
+                </div>
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--primary);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Total Capacity</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.totalCapacity}}</p>
+                </div>
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--danger);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Occupied Seats</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.occupiedSeats}}</p>
+                </div>
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--success);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Free Seats</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.freeSeats}}</p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3 class="card-title">Room Details</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Status</th>
+                                <th>Occupancy</th>
+                                <th>Students Residing</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="room in rooms">
+                                <td><strong>{{ room.room_number }}</strong></td>
+                                <td>
+                                    <span class="status-badge" ng-class="{
+                                        'status-approved': room.status === 'Available',
+                                        'status-rejected': room.status === 'Full',
+                                        'status-pending': room.status === 'Maintenance'
+                                    }">{{ room.status }}</span>
+                                </td>
+                                <td>{{ room.occupied_seats }} / {{ room.capacity }}</td>
+                                <td>
+                                    <div ng-if="room.occupants.length === 0"
+                                        style="color: var(--text-light); font-style: italic;">
+                                        No students assigned
+                                    </div>
+                                    <div ng-if="room.occupants.length > 0">
+                                        <div ng-repeat="student in room.occupants"
+                                            style="margin-bottom: 8px; padding-bottom: 8px; border-bottom: 1px solid #edf2f7;">
+                                            <div style="font-weight: 500;">{{ student.name }} <span
+                                                    style="font-weight: normal; color: var(--text-light); font-size: 0.85em;">({{
+                                                    student.course }}, Year {{ student.year_of_study }})</span></div>
+                                            <div style="font-size: 0.85em; color: var(--text-light);">{{ student.email
+                                                }}</div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr ng-if="rooms.length === 0">
+                                <td colspan="4" style="text-align: center; color: var(--text-light);">No rooms found for
+                                    your hostel.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

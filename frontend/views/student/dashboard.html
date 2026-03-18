@@ -1,0 +1,68 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard" class="active">Overview</a></li>
+            <li><a href="#!/student/rooms">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu">Mess Menu</a></li>
+            <li><a href="#!/student/complaints">Complaints</a></li>
+            <li><a href="#!/student/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Welcome, {{ currentUser.name }}</span>
+                <span class="badge badge-primary">{{ currentUser.course }}</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <h2 class="card-title">Dashboard Overview</h2>
+
+            <div class="grid grid-cols-3">
+                <div class="card">
+                    <h3>Room Booking Status</h3>
+                    <p style="margin-top: 10px; font-weight: 500;">
+                        <span ng-if="!myBooking">No active booking</span>
+                        <span ng-if="myBooking" class="badge"
+                            ng-class="{'badge-warning': myBooking.status === 'Pending', 'badge-success': myBooking.status === 'Approved'}">
+                            {{ myBooking.status }}
+                        </span>
+                    </p>
+                    <p ng-if="myBooking" style="margin-top: 10px; font-size: 0.9rem; color: #6b7280;">
+                        Hostel: {{ myBooking.hostel_name }}<br>
+                        Room: {{ myBooking.room_number }}
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Today's Mess</h3>
+                    <p style="margin-top: 10px; font-weight: 500;">
+                        <span class="badge badge-primary">View Menu</span>
+                    </p>
+                    <p style="margin-top: 10px; font-size: 0.9rem; color: #6b7280;">
+                        Don't forget to mark your attendance!
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h3>Recent Complaints</h3>
+                    <p style="margin-top: 10px; font-weight: 500;">
+                        Total: {{ myComplaints.length }}
+                    </p>
+                    <a href="#!/student/complaints"
+                        style="display: inline-block; margin-top: 10px; font-size: 0.9rem; color: var(--primary-color); text-decoration: none;">View
+                        all &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

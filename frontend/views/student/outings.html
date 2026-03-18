@@ -1,0 +1,127 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard">Overview</a></li>
+            <li><a href="#!/student/rooms">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu">Mess Menu</a></li>
+            <li><a href="#!/student/complaints">Complaints</a></li>
+            <li><a href="#!/student/outings" class="active">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Welcome, {{ currentUser.name }}</span>
+                <span class="badge badge-primary">{{ currentUser.course }}</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <h2 class="card-title" style="margin-bottom: 20px;">Outing Management</h2>
+
+            <!-- Feedback Messages -->
+            <div ng-if="successMsg" class="alert success"
+                style="margin-bottom: 15px; padding: 10px; background: #c6f6d5; color: #22543d; border-radius: 5px;">
+                {{ successMsg }}
+            </div>
+            <div ng-if="errorMsg" class="alert error"
+                style="margin-bottom: 15px; padding: 10px; background: #fed7d7; color: #9b2c2c; border-radius: 5px;">
+                {{ errorMsg }}
+            </div>
+
+            <div class="grid grid-cols-2" style="gap: 20px;">
+                <!-- Request Form -->
+                <div class="card" style="height: fit-content;">
+                    <h3
+                        style="margin-bottom: 15px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
+                        Request Outing</h3>
+                    <form ng-submit="submitOuting()">
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Destination</label>
+                            <input type="text" ng-model="outingData.destination"
+                                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Reason</label>
+                            <textarea ng-model="outingData.reason"
+                                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; min-height: 80px;"
+                                required></textarea>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Departure Date &
+                                Time</label>
+                            <input type="datetime-local" ng-model="outingData.departure_date"
+                                ng-change="updateReturnMinDate()" min="{{ minDateTimeStr }}"
+                                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label style="display: block; margin-bottom: 5px; font-size: 0.9rem;">Return Date &
+                                Time</label>
+                            <input type="datetime-local" ng-model="outingData.return_date"
+                                min="{{ minReturnDateTimeStr || minDateTimeStr }}"
+                                style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 10px;"
+                            ng-disabled="loading">
+                            {{ loading ? 'Submitting...' : 'Submit Request' }}
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Past Requests List -->
+                <div class="card"
+                    style="height: fit-content; overflow: hidden; padding-left:0; padding-right:0; padding-bottom:0;">
+                    <h3
+                        style="margin-bottom: 0px; font-size: 1.1rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px; padding-left:20px; padding-right:20px;">
+                        My Outing Requests</h3>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 10px;">
+                            <thead>
+                                <tr style="background:#f9fafb; border-bottom:1px solid #e5e7eb;">
+                                    <th
+                                        style="padding: 12px 20px; text-align:left; font-size:0.85rem; color:#6b7280; font-weight:600;">
+                                        Date</th>
+                                    <th
+                                        style="padding: 12px 20px; text-align:left; font-size:0.85rem; color:#6b7280; font-weight:600;">
+                                        Destination</th>
+                                    <th
+                                        style="padding: 12px 20px; text-align:left; font-size:0.85rem; color:#6b7280; font-weight:600;">
+                                        Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-if="myOutings.length === 0">
+                                    <td colspan="3" style="padding: 20px; text-align: center; color: #6b7280;">No outing
+                                        requests found.</td>
+                                </tr>
+                                <tr ng-repeat="outing in myOutings" style="border-bottom:1px solid #e5e7eb;">
+                                    <td style="padding: 12px 20px; font-size:0.9rem;">{{ outing.created_at |
+                                        date:'mediumDate' }}</td>
+                                    <td style="padding: 12px 20px; font-size:0.9rem;">{{ outing.destination }}</td>
+                                    <td style="padding: 12px 20px;">
+                                        <span class="badge" ng-class="{
+                                                  'badge-warning': outing.status === 'Pending', 
+                                                  'badge-success': outing.status === 'Approved',
+                                                  'badge-danger': outing.status === 'Rejected',
+                                                  'badge-primary': outing.status === 'Completed'
+                                              }">
+                                            {{ outing.status }}
+                                        </span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,78 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Warden Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/warden/dashboard">Overview</a></li>
+            <li><a href="#!/warden/rooms">Room Status</a></li>
+            <li><a href="#!/warden/bookings" class="active">Room Bookings</a></li>
+            <li><a href="#!/warden/complaints">Complaints</a></li>
+            <li><a href="#!/warden/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Room Booking Requests</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+            <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+            <div class="card">
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Email</th>
+                                <th>Hostel</th>
+                                <th>Room</th>
+                                <th>Requested On</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="b in bookings">
+                                <td>{{ b.student_name }}</td>
+                                <td>{{ b.email }}</td>
+                                <td>{{ b.hostel_name }}</td>
+                                <td>{{ b.room_number }}</td>
+                                <td>{{ b.created_at | date:'medium' }}</td>
+                                <td>
+                                    <span class="badge"
+                                        ng-class="{'badge-warning': b.status === 'Pending', 'badge-success': b.status === 'Approved', 'badge-danger': b.status === 'Rejected'}">
+                                        {{ b.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <div ng-if="b.status === 'Pending'" style="display: flex; gap: 5px;">
+                                        <button class="btn"
+                                            style="background-color: var(--success); padding: 5px 10px; width: auto; font-size: 0.8rem;"
+                                            ng-click="approveBooking(b.id, 'Approved')">Approve</button>
+                                        <button class="btn"
+                                            style="background-color: var(--danger); padding: 5px 10px; width: auto; font-size: 0.8rem;"
+                                            ng-click="approveBooking(b.id, 'Rejected')">Reject</button>
+                                    </div>
+                                    <span ng-if="b.status !== 'Pending'"
+                                        style="color: #9ca3af; font-size: 0.85rem;">Processed</span>
+                                </td>
+                            </tr>
+                            <tr ng-if="bookings.length === 0">
+                                <td colspan="7" style="text-align: center;">No booking requests found.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>

@@ -1,0 +1,36 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Welcome Back</h2>
+        <p>Login to your SVKM NMIMS Hostel Dashboard</p>
+
+        <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+
+        <form ng-submit="doLogin()">
+            <div class="form-group">
+                <label>Email Address</label>
+                <input type="email" class="form-control" ng-model="loginData.email" required
+                    placeholder="Enter your college email">
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="{{ showPassword ? 'text' : 'password' }}" class="form-control"
+                    ng-model="loginData.password" required placeholder="Enter your password">
+                <div style="margin-top: 8px; display: flex; align-items: center;">
+                    <input type="checkbox" id="showPwd" ng-model="showPassword"
+                        style="width: auto; margin-right: 8px; cursor: pointer;">
+                    <label for="showPwd"
+                        style="margin-bottom: 0; font-weight: normal; font-size: 0.9em; cursor: pointer;">Show
+                        Password</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn" ng-disabled="loading">
+                {{ loading ? 'Signing in...' : 'Sign In' }}
+            </button>
+        </form>
+
+        <div class="auth-links">
+            <p>Don't have an account? <a href="#!/register">Register here</a></p>
+        </div>
+    </div>
+</div>

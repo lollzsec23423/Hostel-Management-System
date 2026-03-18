@@ -1,0 +1,117 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard">Overview</a></li>
+            <li><a href="#!/student/rooms" class="active">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu">Mess Menu</a></li>
+            <li><a href="#!/student/complaints">Complaints</a></li>
+            <li><a href="#!/student/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Room Allocation</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+
+            <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+            <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+            <!-- Current Booking Status -->
+            <div class="card" ng-if="myBooking" style="border-left: 5px solid var(--primary-color);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div>
+                        <h3 class="card-title" style="margin-bottom: 5px;">Room Allocation Details</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">Your current active
+                            hostel stay.</p>
+
+                        <div style="display: flex; gap: 40px; margin-bottom: 10px;">
+                            <div>
+                                <p
+                                    style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                                    Hostel Building</p>
+                                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-main);">{{
+                                    myBooking.hostel_name }}</p>
+                            </div>
+                            <div>
+                                <p
+                                    style="font-size: 0.85rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px;">
+                                    Room Number</p>
+                                <p style="font-size: 1.1rem; font-weight: 600; color: var(--text-main);">{{
+                                    myBooking.room_number }}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="badge" style="padding: 8px 16px; font-size: 0.9rem;"
+                            ng-class="{'badge-warning': myBooking.status === 'Pending', 'badge-success': myBooking.status === 'Approved', 'badge-danger': myBooking.status === 'Rejected'}">
+                            {{ myBooking.status }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Book a Room (If no active booking) -->
+            <div class="card" ng-if="!myBooking || myBooking.status === 'Rejected'">
+                <h3 class="card-title">Book a Room</h3>
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500;">Select Hostel</label>
+                    <select class="form-control" ng-model="selectedHostel" ng-change="loadRooms(selectedHostel)"
+                        style="max-width: 300px;">
+                        <option value="">-- Choose Hostel --</option>
+                        <option ng-repeat="h in hostels" value="{{h.id}}">{{h.name}} ({{h.type}})</option>
+                    </select>
+                </div>
+
+                <div class="table-responsive" ng-if="rooms.length > 0">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Room Number</th>
+                                <th>Capacity</th>
+                                <th>Available Seats</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="r in rooms">
+                                <td>{{ r.room_number }}</td>
+                                <td>{{ r.capacity }}</td>
+                                <td>{{ r.capacity - r.occupied_seats }}</td>
+                                <td>
+                                    <span class="badge"
+                                        ng-class="r.status === 'Available' ? 'badge-success' : 'badge-danger'">
+                                        {{ r.status }}
+                                    </span>
+                                </td>
+                                <td>
+                                    <button class="btn" style="padding: 5px 10px; font-size: 0.85rem; width: auto;"
+                                        ng-disabled="r.status !== 'Available'" ng-click="bookRoom(r.id)">
+                                        Book Now
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div ng-if="selectedHostel && rooms.length === 0">
+                    <p>No rooms available in this hostel.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>

@@ -1,0 +1,95 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard">Overview</a></li>
+            <li><a href="#!/student/rooms">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu">Mess Menu</a></li>
+            <li><a href="#!/student/complaints" class="active">Complaints</a></li>
+            <li><a href="#!/student/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Complaint Management</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="grid grid-cols-2">
+                <!-- File Complaint Form -->
+                <div class="card">
+                    <h3 class="card-title">File a Complaint</h3>
+                    <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+                    <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+                    <form ng-submit="submitComplaint()">
+                        <div class="form-group">
+                            <label>Category</label>
+                            <select class="form-control" ng-model="complaintData.category" required>
+                                <option value="Electricity">Electricity</option>
+                                <option value="Water">Water</option>
+                                <option value="Cleanliness">Cleanliness</option>
+                                <option value="Internet">Internet</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Title</label>
+                            <input type="text" class="form-control" ng-model="complaintData.title" required
+                                placeholder="Brief description of the issue">
+                        </div>
+                        <div class="form-group">
+                            <label>Detailed Description</label>
+                            <textarea class="form-control" rows="4" ng-model="complaintData.description" required
+                                placeholder="Explain the exact issue, room details, etc."></textarea>
+                        </div>
+                        <button type="submit" class="btn" ng-disabled="loading">Submit Complaint</button>
+                    </form>
+                </div>
+
+                <!-- Complaint History -->
+                <div class="card">
+                    <h3 class="card-title">My Complaints</h3>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        <div ng-repeat="c in myComplaints"
+                            style="border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <strong style="font-size: 1.05rem;">{{ c.title }}</strong>
+                                <span class="badge"
+                                    ng-class="{'badge-warning': c.status === 'Pending', 'badge-primary': c.status === 'In Progress', 'badge-success': c.status === 'Resolved'}">
+                                    {{ c.status }}
+                                </span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">
+                                {{ c.category }} • {{ c.created_at | date:'medium' }}
+                            </p>
+                            <p style="font-size: 0.95rem;">{{ c.description }}</p>
+
+                            <div ng-if="c.resolution_comment"
+                                style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 6px; font-size: 0.9rem;">
+                                <strong>Warden Reply:</strong> {{ c.resolution_comment }}
+                            </div>
+                            <div ng-if="!c.resolution_comment && c.status === 'Resolved'"
+                                style="margin-top: 10px; padding: 10px; background-color: #f3f4f6; border-radius: 6px; font-size: 0.9rem; color: #6b7280; font-style: italic;">
+                                <strong>System Notification:</strong> Your complaint was marked as resolved by the
+                                Warden without a written comment.
+                            </div>
+                        </div>
+                        <div ng-if="myComplaints.length === 0">
+                            <p>You have not filed any complaints.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

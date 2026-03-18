@@ -1,0 +1,47 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Mess Owner Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/mess-owner/dashboard" class="active">Overview</a></li>
+            <li><a href="#!/mess-owner/menu">Mess Menu</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Welcome, {{ currentUser.name }} (Mess Owner)</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <h2 class="card-title">Mess Overview</h2>
+
+            <div class="grid grid-cols-2">
+                <div class="card" style="border-left: 4px solid var(--primary-color);">
+                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Update Menu</h3>
+                    <p style="font-size: 1rem; margin-top: 10px;">Set the weekly and daily food menus.</p>
+                </div>
+
+                <div class="card" style="border-left: 4px solid var(--success);">
+                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Check Attendance</h3>
+                    <p style="font-size: 1rem; margin-top: 10px;">See how many students are expected for meals.</p>
+                </div>
+            </div>
+
+            <div class="card" style="margin-top: 30px;">
+                <h3 class="card-title">Quick Actions</h3>
+                <div class="grid grid-cols-1">
+                    <button class="btn" style="background-color: var(--success);"
+                        onclick="location.href='#!/mess-owner/menu'">Manage Menu & Attendance</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

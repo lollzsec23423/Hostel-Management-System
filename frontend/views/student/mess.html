@@ -1,0 +1,58 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard">Overview</a></li>
+            <li><a href="#!/student/rooms">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu" class="active">Mess Menu</a></li>
+            <li><a href="#!/student/complaints">Complaints</a></li>
+            <li><a href="#!/student/outings">Outings</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span ng-if="currentPath === '/student/mess/menu'">Mess Menu</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+
+            <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+            <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+            <!-- Menu View -->
+            <div ng-if="currentPath === '/student/mess/menu'">
+                <div class="card">
+                    <h3 class="card-title" style="margin-bottom: 20px;">Today's Mess Menu</h3>
+
+                    <h4
+                        style="border-bottom: 2px solid #e5e7eb; padding-bottom: 5px; margin-bottom: 15px; color: var(--primary-color);">
+                        {{ todayDate | date:'fullDate' }}
+                    </h4>
+
+                    <div class="grid grid-cols-3">
+                        <div class="card" ng-repeat="m in todayMenu"
+                            style="box-shadow: none; border: 1px solid #e5e7eb;">
+                            <div
+                                style="font-size: 1.1rem; font-weight: 700; color: var(--primary-color); margin-bottom: 15px;">
+                                {{ m.meal_type }}
+                            </div>
+                            <p style="white-space: pre-wrap; font-size: 0.95rem;">{{ m.items }}</p>
+                        </div>
+                    </div>
+
+                    <p ng-if="!todayMenu || todayMenu.length === 0">No menu available for today.</p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+</div>
