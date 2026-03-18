@@ -26,18 +26,30 @@ if ($LASTEXITCODE -ne 0) {
 
 if ($statusStr.Trim().Length -gt 0 -or -not $hasCommits) {
     git commit -m "Initial commit"
-} else {
+}
+else {
     Write-Host "No changes to commit."
 }
 
 git branch -M main
+
+# Try pushing
 git push -u origin main
 $pushExitCode = $LASTEXITCODE
+
+# If push fails, pull and try again
+if ($pushExitCode -ne 0) {
+    Write-Host "Push failed, pulling from remote with allow-unrelated-histories..."
+    git pull origin main --allow-unrelated-histories --no-rebase --no-edit | Out-Null
+    git push -u origin main
+    $pushExitCode = $LASTEXITCODE
+}
 
 Write-Host "`n--- Final Output ---"
 if ($pushExitCode -eq 0) {
     Write-Host "Confirm successful push: YES"
-} else {
+}
+else {
     Write-Host "Confirm successful push: FAILED"
 }
 
