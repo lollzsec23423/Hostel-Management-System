@@ -123,7 +123,7 @@ This project is open-source and available under the MIT License.
 
 ## 👨‍💻 Author
 
-**Agam Bhansali**  **Krishnamegh Nannaware**
+**Agam Bhansali**
 
 ---
 
