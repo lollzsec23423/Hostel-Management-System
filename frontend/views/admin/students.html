@@ -1,0 +1,123 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3><p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer">Data Explorer</a></li>
+            <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students" class="active">Manage Students</a></li>
+            <li><a href="#!/admin/discipline">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance">Maintenance</a></li>
+            <li><a href="#!/admin/damages">Property Damages</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info"><span>Student Management</span></div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="card">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 20px;">
+                    <h3 class="card-title">All Students</h3>
+                    <button class="btn" style="background-color: var(--primary-color);" ng-click="openModal()">+ Add New Student</button>
+                </div>
+                
+                <table style="width: 100%; border-collapse: collapse; text-align: left; border: 1px solid #e5e7eb; border-radius: 8px;">
+                    <thead style="background-color: #f9fafb; border-bottom: 1px solid #e5e7eb;">
+                        <tr>
+                            <th style="padding: 12px 15px;">Name</th>
+                            <th style="padding: 12px 15px;">Contact</th>
+                            <th style="padding: 12px 15px;">Email</th>
+                            <th style="padding: 12px 15px;">Details</th>
+                            <th style="padding: 12px 15px;">Hostel</th>
+                            <th style="padding: 12px 15px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="s in students" style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 12px 15px; font-weight:500">{{s.name}}</td>
+                            <td style="padding: 12px 15px;">{{s.contact_number || '-'}}</td>
+                            <td style="padding: 12px 15px;">{{s.email}}</td>
+                            <td style="padding: 12px 15px;">{{s.course}} {{s.year_of_study}} Yr, {{s.gender}}</td>
+                            <td style="padding: 12px 15px;">{{s.hostel_name || 'Not Assigned'}}</td>
+                            <td style="padding: 12px 15px; display:flex; gap:5px;">
+                                <button class="btn" style="background-color:#f59e0b; padding: 5px 10px;" ng-click="openModal(s)">Edit</button>
+                                <button class="btn" style="background-color:#ef4444; padding: 5px 10px;" ng-click="deleteStudent(s.id)">Del</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Modal for Add/Edit -->
+            <div ng-if="showModal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center;">
+                <div class="card" style="width:400px; padding:20px; z-index: 1000;">
+                    <h3 style="margin-bottom:15px;">{{isEditing ? 'Edit' : 'Add'}} Student</h3>
+                    <form ng-submit="saveStudent()">
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Name</label>
+                            <input type="text" class="form-control" ng-model="currentStudent.name" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Email</label>
+                            <input type="email" class="form-control" ng-model="currentStudent.email" ng-disabled="isEditing" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:10px;">
+                            <label>Contact Number</label>
+                            <input type="text" class="form-control" ng-model="currentStudent.contact_number">
+                        </div>
+                        <div class="form-group" ng-if="!isEditing" style="margin-bottom:10px;">
+                            <label>Password</label>
+                            <input type="password" class="form-control" ng-model="currentStudent.password" required>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-bottom:10px;">
+                            <div style="flex:1">
+                                <label>Course</label>
+                                <select class="form-control" ng-model="currentStudent.course">
+                                    <option value="MBA Tech">MBA Tech</option>
+                                    <option value="B.Tech CE">B.Tech CE</option>
+                                    <option value="B.Tech AIML">B.Tech AIML</option>
+                                    <option value="B.Tech Data Science">B.Tech Data Science</option>
+                                    <option value="B.Tech CS">B.Tech CS</option>
+                                </select>
+                            </div>
+                            <div style="flex:1">
+                                <label>Year</label>
+                                <input type="number" class="form-control" ng-model="currentStudent.year_of_study" min="1" max="5">
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; margin-bottom:15px;">
+                            <div style="flex:1">
+                                <label>Gender</label>
+                                <select class="form-control" ng-model="currentStudent.gender">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                </select>
+                            </div>
+                            <div style="flex:1">
+                                <label>Hostel</label>
+                                <select class="form-control" ng-model="currentStudent.hostel_id" ng-options="h.id as h.name for h in hostels">
+                                    <option value="">None</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div style="display:flex; gap:10px; justify-content:flex-end;">
+                            <button type="button" class="btn" style="background:#6b7280" ng-click="closeModal()">Cancel</button>
+                            <button type="submit" class="btn" style="background:var(--primary-color)">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+        </div>
+    </main>
+</div>

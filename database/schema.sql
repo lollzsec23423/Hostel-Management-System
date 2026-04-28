@@ -6,6 +6,7 @@ USE svkm_hostel_db;
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    contact_number VARCHAR(15) DEFAULT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     role ENUM('Student', 'Admin', 'Warden', 'Mess Owner') DEFAULT 'Student',
@@ -137,6 +138,38 @@ CREATE TABLE IF NOT EXISTS outings (
     departure_date DATETIME NOT NULL,
     return_date DATETIME NOT NULL,
     status ENUM('Pending', 'Approved', 'Rejected', 'Completed') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 9. Disciplinary Cases Table (DC)
+CREATE TABLE IF NOT EXISTS disciplinary_cases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    reason TEXT NOT NULL,
+    action_taken ENUM('Warning', 'Fine', 'Suspension', 'YB') NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 10. Property Damages Table
+CREATE TABLE IF NOT EXISTS property_damages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    item_damaged VARCHAR(150) NOT NULL,
+    damage_cost DECIMAL(10, 2) NOT NULL,
+    status ENUM('Pending', 'Paid') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- 11. Maintenance Requests Table
+CREATE TABLE IF NOT EXISTS maintenance_requests (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    student_id INT NOT NULL,
+    item_to_fix VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    status ENUM('Pending', 'In Progress', 'Resolved') DEFAULT 'Pending',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (student_id) REFERENCES users(id) ON DELETE CASCADE
 );

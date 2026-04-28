@@ -271,3 +271,112 @@ exports.getWardenHostelOccupancy = async (req, res) => {
         res.status(500).json({ error: 'Internal server error while fetching occupancy' });
     }
 };
+
+exports.exportWardenHostelOccupancy = async (req, res) => {
+    try {
+        const rawHostelId = req.user.hostel_id;
+        const hostelId = parseInt(rawHostelId, 10);
+
+        if (!hostelId || isNaN(hostelId)) {
+            return res.status(403).json({ error: "No valid hostel assigned to this warden" });
+        }
+
+        let sqlOutput = `-- Exporting Occupancy for Hostel ID: ${hostelId}\n\n`;
+
+        // Export Users (Students ONLY for this hostel)
+        // We only care about users who are actually approved in the bookings or have hostel_id set
+        const [users] = await db.execute('SELECT * FROM users WHERE role = "Student" AND hostel_id = ?', [hostelId]);
+        if (users.length > 0) {
+            sqlOutput += '-- INSERT Users (Students)\n';
+            users.forEach(u => {
+                const hId = u.hostel_id !== null ? u.hostel_id : 'NULL';
+                sqlOutput += `INSERT IGNORE INTO users (id, name, email, password, role, course, gender, year_of_study, hostel_id) VALUES (${u.id}, ${db.escape(u.name)}, ${db.escape(u.email)}, ${db.escape(u.password)}, ${db.escape(u.role)}, ${db.escape(u.course)}, ${db.escape(u.gender)}, ${u.year_of_study}, ${hId});\n`;
+            });
+            sqlOutput += '\n';
+        }
+
+        // Export Rooms for this hostel
+        const [rooms] = await db.execute('SELECT * FROM rooms WHERE hostel_id = ?', [hostelId]);
+        if (rooms.length > 0) {
+            sqlOutput += '-- INSERT Rooms\n';
+            rooms.forEach(r => {
+                sqlOutput += `INSERT IGNORE INTO rooms (id, hostel_id, room_number, capacity, occupied_seats, status) VALUES (${r.id}, ${r.hostel_id}, ${db.escape(r.room_number)}, ${r.capacity}, ${r.occupied_seats}, ${db.escape(r.status)});\n`;
+            });
+            sqlOutput += '\n';
+        }
+
+        // Export Room Bookings
+        const [bookings] = await db.execute(`
+            SELECT b.* FROM room_bookings b
+            JOIN rooms r ON b.room_id = r.id
+            WHERE r.hostel_id = ? AND b.status = "Approved"
+        `, [hostelId]);
+        
+        if (bookings.length > 0) {
+            sqlOutput += '-- INSERT Room Bookings\n';
+            bookings.forEach(b => {
+                sqlOutput += `INSERT IGNORE INTO room_bookings (id, student_id, room_id, status) VALUES (${b.id}, ${b.student_id}, ${b.room_id}, ${db.escape(b.status)});\n`;
+            });
+            sqlOutput += '\n';
+        }
+
+        // Send as a downloadable file
+        res.setHeader('Content-disposition', 'attachment; filename=hostel_occupancy_export.sql');
+        res.setHeader('Content-type', 'application/sql');
+        res.send(sqlOutput);
+
+    } catch (err) {
+        console.error("Export Error:", err);
+        res.status(500).json({ error: 'Internal server error while exporting occupancy' });
+    }
+};
+
+exports.importWardenHostelOccupancy = async (req, res) => {
+    try {
+        const rawHostelId = req.user.hostel_id;
+        const hostelId = parseInt(rawHostelId, 10);
+
+        if (!hostelId || isNaN(hostelId)) {
+            return res.status(403).json({ error: "No valid hostel assigned to this warden" });
+        }
+
+        const sqlContent = req.body.sql;
+        if (!sqlContent || typeof sqlContent !== 'string') {
+            return res.status(400).json({ error: "Invalid SQL data" });
+        }
+
+        // Split by semicolon to get individual statements
+        const statements = sqlContent.split(';')
+            .map(stmt => stmt.trim())
+            .filter(stmt => stmt.length > 0 && !stmt.startsWith('--'));
+
+        if (statements.length === 0) {
+            return res.status(400).json({ error: "No valid SQL statements found" });
+        }
+
+        const connection = await db.getConnection();
+        try {
+            await connection.beginTransaction();
+            for (let stmt of statements) {
+                // Security: ONLY allow INSERT IGNORE INTO queries
+                if (stmt.toUpperCase().startsWith('INSERT IGNORE INTO')) {
+                    // execute() sometimes requires parameterized queries, but raw queries can be run with query()
+                    await connection.query(stmt);
+                }
+            }
+            await connection.commit();
+            res.json({ message: "SQL imported successfully" });
+        } catch (err) {
+            await connection.rollback();
+            throw err;
+        } finally {
+            connection.release();
+        }
+
+    } catch (err) {
+        console.error("Import Error:", err);
+        res.status(500).json({ error: 'Internal server error while importing occupancy' });
+    }
+};
+
+

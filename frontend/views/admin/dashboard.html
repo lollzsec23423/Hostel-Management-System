@@ -3,14 +3,20 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <h3>SVKM NMIMS</h3>
-            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Admin Dashboard</p>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
         </div>
         <ul class="nav-links">
             <li><a href="#!/admin/dashboard" class="active">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer">Data Explorer</a></li>
             <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
             <li><a href="#!/admin/bookings">Room Bookings</a></li>
-            <li><a href="#!/admin/mess">Mess Management</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
             <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students">Manage Students</a></li>
+            <li><a href="#!/admin/discipline">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance">Maintenance</a></li>
+            <li><a href="#!/admin/damages">Property Damages</a></li>
         </ul>
     </aside>
 
@@ -18,7 +24,7 @@
     <main class="main-content">
         <header class="topbar">
             <div class="user-info">
-                <span>Welcome, Administrator</span>
+                <span>Welcome, {{ currentUser.name || 'Administrator' }} ({{ currentUser.role }})</span>
             </div>
             <button class="logout-btn" ng-click="logout()">Logout</button>
         </header>
@@ -26,23 +32,46 @@
         <div class="content-area">
             <h2 class="card-title">System Overview</h2>
 
-            <div class="grid grid-cols-2">
+            <div class="grid grid-cols-5" style="gap: 15px;">
                 <div class="card" style="border-left: 4px solid var(--primary-color);">
-                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Total Students</h3>
-                    <p style="font-size: 2rem; font-weight: 700; margin-top: 10px;">{{ stats.totalStudents || 0 }}</p>
+                    <h3 style="color: #6b7280; font-size: 0.8rem; text-transform: uppercase;">Students</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin-top: 10px;">{{ stats.totalStudents || 0 }}</p>
                 </div>
-
-                <div class="card" style="border-left: 4px solid var(--success);">
-                    <h3 style="color: #6b7280; font-size: 0.9rem; text-transform: uppercase;">Total Rooms</h3>
-                    <p style="font-size: 2rem; font-weight: 700; margin-top: 10px;">{{ stats.totalRooms || 0 }}</p>
+                <div class="card" style="border-left: 4px solid #ef4444;">
+                    <h3 style="color: #6b7280; font-size: 0.8rem; text-transform: uppercase;">DC Cases</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin-top: 10px;">{{ stats.totalDCCases || 0 }}</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #b91c1c;">
+                    <h3 style="color: #6b7280; font-size: 0.8rem; text-transform: uppercase;">YB Cases</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin-top: 10px;">{{ stats.totalYBCases || 0 }}</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #f59e0b;">
+                    <h3 style="color: #6b7280; font-size: 0.8rem; text-transform: uppercase;">Pending Maint.</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin-top: 10px;">{{ stats.pendingMaintenance || 0 }}</p>
+                </div>
+                <div class="card" style="border-left: 4px solid #10b981;">
+                    <h3 style="color: #6b7280; font-size: 0.8rem; text-transform: uppercase;">Damage Fines</h3>
+                    <p style="font-size: 1.5rem; font-weight: 700; margin-top: 10px;">₹{{ stats.totalDamageFines || 0 }}</p>
                 </div>
             </div>
 
             <div class="card" style="margin-top: 30px;">
-                <h3 class="card-title">Quick Actions</h3>
-                <div class="grid grid-cols-1">
-                    <button class="btn" style="background-color: var(--primary-color);"
+                <h3 class="card-title">Quick Actions & Database Sync</h3>
+                <div style="display: flex; flex-direction: column; gap: 15px;">
+                    <button class="btn" style="background-color: #3b82f6;"
                         onclick="location.href='#!/admin/hostels'">Manage Hostels</button>
+                    
+                    <button class="btn" ng-if="currentUser.role === 'Admin'" style="background-color: #8b5cf6;"
+                        onclick="location.href='#!/admin/explorer'">Advanced Data Explorer (SQL)</button>
+                    
+                    <button class="btn" ng-if="currentUser.role === 'Admin'" ng-click="exportDatabase()" style="background-color: var(--primary, #4f46e5);">
+                        Export Full Database (.sql)
+                    </button>
+                    
+                    <input type="file" id="adminSqlInput" style="display: none;" accept=".sql" onchange="angular.element(this).scope().importDatabase(this)">
+                    <button class="btn" ng-if="currentUser.role === 'Admin'" onclick="document.getElementById('adminSqlInput').click()" style="background-color: var(--success, #10b981);">
+                        Import Database Backup (.sql)
+                    </button>
                 </div>
             </div>
         </div>

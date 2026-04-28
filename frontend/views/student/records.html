@@ -1,0 +1,69 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard">Overview</a></li>
+            <li><a href="#!/student/rooms">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu">Mess Menu</a></li>
+            <li><a href="#!/student/complaints">Complaints</a></li>
+            <li><a href="#!/student/outings">Outings</a></li>
+            <li><a href="#!/student/maintenance">Maintenance</a></li>
+            <li><a href="#!/student/records" class="active">My Records</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Welcome, {{ currentUser.name }}</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="grid grid-cols-2" style="align-items:start">
+                <div class="card">
+                    <h3 class="card-title">My Disciplinary Cases (DC)</h3>
+                    <div ng-if="dcCases.length === 0" style="padding:20px; text-align:center; color:#6b7280; font-size:0.9rem;">No disciplinary cases on record.</div>
+                    <table ng-if="dcCases.length > 0" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <tr style="border-bottom: 2px solid #e5e7eb;">
+                            <th style="padding: 10px;">Date</th>
+                            <th style="padding: 10px;">Reason</th>
+                            <th style="padding: 10px;">Action Taken</th>
+                        </tr>
+                        <tr ng-repeat="c in dcCases" style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 10px;">{{c.created_at | date:'mediumDate'}}</td>
+                            <td style="padding: 10px;">{{c.reason}}</td>
+                            <td style="padding: 10px; font-weight:bold; color:#b91c1c;">{{c.action_taken}}</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">Property Damage Fines</h3>
+                    <div ng-if="damages.length === 0" style="padding:20px; text-align:center; color:#6b7280; font-size:0.9rem;">No property damage fines.</div>
+                    <table ng-if="damages.length > 0" style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <tr style="border-bottom: 2px solid #e5e7eb;">
+                            <th style="padding: 10px;">Date</th>
+                            <th style="padding: 10px;">Item Damaged</th>
+                            <th style="padding: 10px;">Cost</th>
+                            <th style="padding: 10px;">Status</th>
+                        </tr>
+                        <tr ng-repeat="d in damages" style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 10px;">{{d.created_at | date:'mediumDate'}}</td>
+                            <td style="padding: 10px;">{{d.item_damaged}}</td>
+                            <td style="padding: 10px; font-weight:bold; color:var(--primary-color);">₹{{d.damage_cost}}</td>
+                            <td style="padding: 10px;">
+                                <span ng-if="d.status==='Pending'" style="color:#ef4444; font-weight:bold;">Pending</span>
+                                <span ng-if="d.status==='Paid'" style="color:#10b981; font-weight:bold;">Paid</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

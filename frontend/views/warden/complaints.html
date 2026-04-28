@@ -25,7 +25,61 @@
             <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
             <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
 
+            <!-- Complaints Overview -->
+            <div class="grid grid-cols-4" style="margin-bottom: 20px;">
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--primary, #4f46e5);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Total Complaints</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.total}}</p>
+                </div>
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--warning, #f59e0b);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Pending</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.pending}}</p>
+                </div>
+                <div class="card" style="padding: 15px; border-left: 4px solid #3b82f6;">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">In Progress</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.inProgress}}</p>
+                </div>
+                <div class="card" style="padding: 15px; border-left: 4px solid var(--success, #10b981);">
+                    <h3 style="font-size: 0.85rem; color: #6b7280; text-transform: uppercase;">Resolved</h3>
+                    <p style="font-size: 1.5rem; font-weight: 600; margin-top: 5px;">{{stats.resolved}}</p>
+                </div>
+            </div>
+
+            <!-- Complaints Chart -->
+            <div class="card" style="margin-bottom: 30px; display: flex; flex-direction: column; align-items: center; padding: 20px;">
+                <h3 style="font-size: 1rem; color: #4b5563; margin-bottom: 15px; align-self: flex-start;">Complaints by Status</h3>
+                <div style="position: relative; width: 100%; max-width: 300px; height: 300px;">
+                    <canvas id="complaintsChart"></canvas>
+                </div>
+            </div>
+
             <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 class="card-title" style="margin-bottom: 0;">Student Complaints</h3>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                </svg>
+                            </span>
+                            <input type="text" ng-model="searchQuery" placeholder="Search by name, room, etc..." autocomplete="off"
+                                style="padding: 10px 12px 10px 35px !important; border: 1px solid #d1d5db !important; border-radius: 8px !important; font-size: 0.95rem !important; outline: none !important; width: 320px !important; min-width: 320px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important; box-sizing: border-box !important;"
+                                onfocus="this.style.borderColor='#4f46e5'; this.style.boxShadow='0 0 0 3px rgba(79, 70, 229, 0.2)'"
+                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'">
+                        </div>
+                        
+                        <select ng-model="filterStatus"
+                            style="padding: 10px 35px 10px 15px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; outline: none; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); appearance: none; background: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' fill=\'%236b7280\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z\'/%3E%3C/svg%3E') no-repeat right 15px center; background-color: white; cursor: pointer; transition: border-color 0.2s ease;"
+                            onfocus="this.style.borderColor='#4f46e5'"
+                            onblur="this.style.borderColor='#e5e7eb'">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="In Progress">In Progress</option>
+                            <option value="Resolved">Resolved</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -39,7 +93,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="c in complaints">
+                            <tr ng-repeat="c in complaints | filter:searchQuery | filter:(filterStatus ? {status: filterStatus} : undefined)">
                                 <td>
                                     <strong>{{ c.student_name }}</strong><br>
                                     <span style="font-size: 0.8rem; color: #6b7280;">{{ c.email }}</span>

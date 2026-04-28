@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const hostelController = require('../controllers/hostelController');
-const { authMiddleware, isAdmin } = require('../middleware/authMiddleware');
+const { authMiddleware, isWarden } = require('../middleware/authMiddleware');
 
 router.get('/', authMiddleware, hostelController.getAllHostels);
-router.post('/', authMiddleware, isAdmin, hostelController.createHostel);
-router.put('/:id', authMiddleware, isAdmin, hostelController.updateHostel);
-router.delete('/:id', authMiddleware, isAdmin, hostelController.deleteHostel);
+router.post('/', authMiddleware, isWarden, hostelController.createHostel);
+router.put('/:id', authMiddleware, isWarden, hostelController.updateHostel);
+router.delete('/:id', authMiddleware, isWarden, hostelController.deleteHostel);
 
 module.exports = router;

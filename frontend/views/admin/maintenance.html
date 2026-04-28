@@ -1,0 +1,74 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3><p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer">Data Explorer</a></li>
+            <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students">Manage Students</a></li>
+            <li><a href="#!/admin/discipline">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance" class="active">Maintenance</a></li>
+            <li><a href="#!/admin/damages">Property Damages</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info"><span>Maintenance Tracking Log</span></div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="card" style="margin-bottom: 20px; display: flex; flex-direction: column; align-items: center; padding: 20px;">
+                <h3 style="font-size: 1rem; color: #4b5563; margin-bottom: 15px; align-self: flex-start;">Maintenance by Status</h3>
+                <div style="position: relative; width: 100%; max-width: 300px; height: 250px;">
+                    <canvas id="maintenanceChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3 class="card-title">Recent Maintenance Log</h3>
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                    <thead>
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+                            <th style="padding: 10px;">Date</th>
+                            <th style="padding: 10px;">Student</th>
+                            <th style="padding: 10px;">Item details</th>
+                            <th style="padding: 10px;">Status / Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="m in records" style="border-bottom: 1px solid #e5e7eb;">
+                            <td style="padding: 10px;">{{m.created_at | date:'mediumDate'}}</td>
+                            <td style="padding: 10px; font-weight: 500;">
+                                {{m.student_name}}<br/>
+                                <span style="font-weight: 400; color:#6b7280; font-size: 0.8rem;">{{m.email}}</span>
+                            </td>
+                            <td style="padding: 10px;">
+                                <div><strong>{{m.item_to_fix}}</strong></div>
+                                <div style="font-size:0.8rem; color:#6b7280;">{{m.description}}</div>
+                            </td>
+                            <td style="padding: 10px;">
+                                <select class="form-control" ng-model="m.status" 
+                                    ng-change="updateStatus(m.id, m.status)"
+                                    style="padding: 5px; font-size: 0.85rem; width: auto; margin-bottom: 5px;"
+                                    ng-class="{'bg-warning': m.status === 'Pending', 'bg-primary': m.status === 'In Progress', 'bg-success': m.status === 'Resolved'}">
+                                    <option value="Pending">Pending</option>
+                                    <option value="In Progress">In Progress</option>
+                                    <option value="Resolved">Resolved</option>
+                                </select><br/>
+                                <button class="btn" style="background:#ef4444; padding:2px 6px; font-size:0.75rem" ng-click="deleteMaintenance(m.id)">Del</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

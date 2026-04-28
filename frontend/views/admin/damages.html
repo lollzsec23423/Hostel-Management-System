@@ -1,0 +1,92 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3><p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer">Data Explorer</a></li>
+            <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students">Manage Students</a></li>
+            <li><a href="#!/admin/discipline">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance">Maintenance</a></li>
+            <li><a href="#!/admin/damages" class="active">Property Damages</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info"><span>Property Damage Logging</span></div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="grid grid-cols-2" style="align-items:start; margin-bottom: 20px; gap: 20px;">
+                <div class="card" style="margin: 0;">
+                    <h3 class="card-title">Log Item Damage</h3>
+                    <form ng-submit="addDamage()">
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Student Liable</label>
+                            <select class="form-control" ng-model="newDamage.student_id" ng-options="s.id as s.name + ' (' + s.email + ')' for s in students" required>
+                                <option value="">-- Select Student --</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Item Damaged (e.g. Fan, Bed, Locker)</label>
+                            <input type="text" class="form-control" ng-model="newDamage.item_damaged" required>
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Damage Fine Amount (₹)</label>
+                            <input type="number" class="form-control" ng-model="newDamage.damage_cost" required min="1">
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Log Fine</button>
+                    </form>
+                </div>
+                
+                <div class="card" style="display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; height: 100%;">
+                    <h3 style="font-size: 1rem; color: #4b5563; margin-bottom: 15px; align-self: flex-start;">Damages by Status</h3>
+                    <div style="position: relative; width: 100%; max-width: 300px; height: 250px; margin: auto;">
+                        <canvas id="damageChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                    <h3 class="card-title">Recorded Damage Fines</h3>
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <th style="padding: 10px;">Date</th>
+                                <th style="padding: 10px;">Student</th>
+                                <th style="padding: 10px;">Details</th>
+                                <th style="padding: 10px;">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="d in damages" style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 10px;">{{d.created_at | date:'mediumDate'}}</td>
+                                <td style="padding: 10px; font-weight: 500;">{{d.student_name}}</td>
+                                <td style="padding: 10px;">
+                                    <div>{{d.item_damaged}}</div>
+                                    <div style="font-weight:bold; color:var(--primary-color)">₹{{d.damage_cost}}</div>
+                                </td>
+                                <td style="padding: 10px;">
+                                    <span ng-if="d.status==='Pending'" style="color:#ef4444; font-weight:bold;">Pending</span>
+                                    <span ng-if="d.status==='Paid'" style="color:#10b981; font-weight:bold;">Paid</span>
+                                    <div style="margin-top:5px;">
+                                        <button ng-if="d.status==='Pending'" class="btn" style="background:#10b981; padding:2px 6px; font-size:0.75rem" ng-click="updateStatus(d.id, 'Paid')">Mark Paid</button>
+                                        <button class="btn" style="background:#ef4444; padding:2px 6px; font-size:0.75rem" ng-click="deleteDamage(d.id)">Del</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

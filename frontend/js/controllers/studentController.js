@@ -189,3 +189,50 @@ app.controller('StudentOutingController', function ($scope, $http, API_URL) {
     };
 });
 
+// Student Records Controller
+app.controller('StudentRecordController', function ($scope, $http, API_URL) {
+    $scope.dcCases = [];
+    $scope.damages = [];
+    
+    $http.get(API_URL + '/dc/my-cases').then(res => {
+        $scope.dcCases = res.data;
+    }).catch(err => console.error("Error fetching DC Cases", err));
+
+    $http.get(API_URL + '/damages/my-damages').then(res => {
+        $scope.damages = res.data;
+    }).catch(err => console.error("Error fetching Damages", err));
+});
+
+// Student Maintenance Controller
+app.controller('StudentMaintenanceController', function ($scope, $http, API_URL) {
+    $scope.myMaintenance = [];
+    $scope.maintenanceData = {};
+    $scope.loading = false;
+
+    function loadMaintenance() {
+        $http.get(API_URL + '/maintenance/my-requests').then(function (res) {
+            $scope.myMaintenance = res.data;
+        }).catch(function (err) {
+            console.error(err);
+        });
+    }
+
+    loadMaintenance();
+
+    $scope.submitMaintenance = function () {
+        $scope.errorMsg = "";
+        $scope.successMsg = "";
+        $scope.loading = true;
+
+        $http.post(API_URL + '/maintenance', $scope.maintenanceData).then(function (res) {
+            $scope.loading = false;
+            $scope.successMsg = res.data.message;
+            $scope.maintenanceData = {};
+            loadMaintenance();
+        }).catch(function (err) {
+            $scope.loading = false;
+            $scope.errorMsg = err.data.error || 'Failed to submit request';
+        });
+    };
+});
+

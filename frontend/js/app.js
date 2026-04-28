@@ -10,108 +10,123 @@ app.config(function ($routeProvider, $httpProvider) {
     $routeProvider
         // Auth Routes
         .when('/login', {
-            templateUrl: 'views/login.html',
+            templateUrl: 'views/login.html?v=1',
             controller: 'AuthController'
         })
         .when('/register', {
-            templateUrl: 'views/register.html',
+            templateUrl: 'views/register.html?v=1',
             controller: 'AuthController'
         })
 
         // Student Routes
         .when('/student/dashboard', {
-            templateUrl: 'views/student/dashboard.html',
+            templateUrl: 'views/student/dashboard.html?v=1',
             controller: 'StudentDashboardController',
             resolve: { auth: checkAuth('Student') }
         })
+        .when('/student/records', {
+            templateUrl: 'views/student/records.html?v=1',
+            controller: 'StudentRecordController',
+            resolve: { auth: checkAuth('Student') }
+        })
         .when('/student/rooms', {
-            templateUrl: 'views/student/rooms.html',
+            templateUrl: 'views/student/rooms.html?v=1',
             controller: 'StudentRoomController',
             resolve: { auth: checkAuth('Student') }
         })
         .when('/student/mess/attendance', {
-            templateUrl: 'views/student/mess.html',
+            templateUrl: 'views/student/mess.html?v=1',
             controller: 'StudentMessController',
             resolve: { auth: checkAuth('Student') }
         })
         .when('/student/mess/menu', {
-            templateUrl: 'views/student/mess.html',
+            templateUrl: 'views/student/mess.html?v=1',
             controller: 'StudentMessController',
             resolve: { auth: checkAuth('Student') }
         })
         .when('/student/complaints', {
-            templateUrl: 'views/student/complaints.html',
+            templateUrl: 'views/student/complaints.html?v=1',
             controller: 'StudentComplaintController',
             resolve: { auth: checkAuth('Student') }
         })
         .when('/student/outings', {
-            templateUrl: 'views/student/outings.html',
+            templateUrl: 'views/student/outings.html?v=1',
             controller: 'StudentOutingController',
             resolve: { auth: checkAuth('Student') }
         })
+        .when('/student/maintenance', {
+            templateUrl: 'views/student/maintenance.html?v=1',
+            controller: 'StudentMaintenanceController',
+            resolve: { auth: checkAuth('Student') }
+        })
 
-        // Admin Routes
+        // Admin & Warden Shared Routes
         .when('/admin/dashboard', {
-            templateUrl: 'views/admin/dashboard.html',
+            templateUrl: 'views/admin/dashboard.html?v=1',
             controller: 'AdminDashboardController',
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
+        })
+        .when('/admin/explorer', {
+            templateUrl: 'views/admin/explorer.html?v=1',
+            controller: 'AdminExplorerController',
             resolve: { auth: checkAuth('Admin') }
         })
         .when('/admin/hostels', {
-            templateUrl: 'views/admin/hostels.html',
+            templateUrl: 'views/admin/hostels.html?v=1',
             controller: 'AdminHostelController',
-            resolve: { auth: checkAuth('Admin') }
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
         })
         .when('/admin/bookings', {
-            templateUrl: 'views/admin/bookings.html',
+            templateUrl: 'views/admin/bookings.html?v=1',
             controller: 'AdminBookingController',
-            resolve: { auth: checkAuth('Admin') }
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
         })
         .when('/admin/mess', {
-            templateUrl: 'views/admin/mess.html',
+            templateUrl: 'views/admin/mess.html?v=1',
             controller: 'AdminMessController',
             resolve: { auth: checkAuth('Admin') }
         })
         .when('/admin/complaints', {
-            templateUrl: 'views/admin/complaints.html',
+            templateUrl: 'views/admin/complaints.html?v=1',
             controller: 'AdminComplaintController',
-            resolve: { auth: checkAuth('Admin') }
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
+        })
+        .when('/admin/outings', {
+            templateUrl: 'views/admin/outings.html?v=1',
+            controller: 'AdminOutingController',
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
+        })
+        .when('/admin/students', {
+            templateUrl: 'views/admin/students.html?v=1',
+            controller: 'AdminStudentController',
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
+        })
+        .when('/admin/discipline', {
+            templateUrl: 'views/admin/discipline.html?v=1',
+            controller: 'AdminDCController',
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
+        })
+        .when('/admin/maintenance', {
+            templateUrl: 'views/admin/maintenance.html?v=1',
+            controller: 'AdminMaintenanceController',
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
+        })
+        .when('/admin/damages', {
+            templateUrl: 'views/admin/damages.html?v=1',
+            controller: 'AdminDamageController',
+            resolve: { auth: checkAuth(['Admin', 'Warden']) }
         })
 
-        // Warden Routes
-        .when('/warden/dashboard', {
-            templateUrl: 'views/warden/dashboard.html',
-            controller: 'WardenDashboardController',
-            resolve: { auth: checkAuth('Warden') }
-        })
-        .when('/warden/bookings', {
-            templateUrl: 'views/warden/bookings.html',
-            controller: 'WardenBookingController',
-            resolve: { auth: checkAuth('Warden') }
-        })
-        .when('/warden/complaints', {
-            templateUrl: 'views/warden/complaints.html',
-            controller: 'WardenComplaintController',
-            resolve: { auth: checkAuth('Warden') }
-        })
-        .when('/warden/rooms', {
-            templateUrl: 'views/warden/rooms.html',
-            controller: 'WardenRoomStatusController',
-            resolve: { auth: checkAuth('Warden') }
-        })
-        .when('/warden/outings', {
-            templateUrl: 'views/warden/outings.html',
-            controller: 'WardenOutingController',
-            resolve: { auth: checkAuth('Warden') }
-        })
+
 
         // Mess Owner Routes
         .when('/mess-owner/dashboard', {
-            templateUrl: 'views/mess-owner/dashboard.html',
+            templateUrl: 'views/mess-owner/dashboard.html?v=1',
             controller: 'MessOwnerDashboardController',
             resolve: { auth: checkAuth('Mess Owner') }
         })
         .when('/mess-owner/menu', {
-            templateUrl: 'views/mess-owner/menu.html',
+            templateUrl: 'views/mess-owner/menu.html?v=1',
             controller: 'MessOwnerMenuController',
             resolve: { auth: checkAuth('Mess Owner') }
         })
@@ -145,12 +160,21 @@ app.factory('authInterceptor', function ($window, $q) {
     };
 });
 
-function checkAuth(requiredRole) {
+function checkAuth(requiredRoles) {
     return function ($q, $location, authService) {
         var deferred = $q.defer();
         var user = authService.getUser();
 
-        if (user && user.role === requiredRole) {
+        let hasAccess = false;
+        if (user) {
+            if (Array.isArray(requiredRoles)) {
+                hasAccess = requiredRoles.includes(user.role);
+            } else {
+                hasAccess = user.role === requiredRoles;
+            }
+        }
+
+        if (hasAccess) {
             deferred.resolve();
         } else {
             console.log("Access denied, redirecting...");

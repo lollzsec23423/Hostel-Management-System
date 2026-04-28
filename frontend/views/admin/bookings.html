@@ -2,14 +2,20 @@
     <aside class="sidebar">
         <div class="sidebar-header">
             <h3>SVKM NMIMS</h3>
-            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Admin Dashboard</p>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
         </div>
         <ul class="nav-links">
             <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer">Data Explorer</a></li>
             <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
             <li><a href="#!/admin/bookings" class="active">Room Bookings</a></li>
-            <li><a href="#!/admin/mess">Mess Management</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
             <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students">Manage Students</a></li>
+            <li><a href="#!/admin/discipline">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance">Maintenance</a></li>
+            <li><a href="#!/admin/damages">Property Damages</a></li>
         </ul>
     </aside>
 
@@ -25,7 +31,52 @@
             <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
             <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
 
+            <!-- Interactive Charts -->
+            <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                <!-- Bookings by Status -->
+                <div class="card" style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px;">
+                    <h3 style="font-size: 1rem; color: #4b5563; margin-bottom: 15px; align-self: flex-start;">Bookings by Status</h3>
+                    <div style="position: relative; width: 100%; max-width: 250px; height: 250px;">
+                        <canvas id="adminStatusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Bookings by Hostel -->
+                <div class="card" style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px;">
+                    <h3 style="font-size: 1rem; color: #4b5563; margin-bottom: 15px; align-self: flex-start;">Bookings by Hostel</h3>
+                    <div style="position: relative; width: 100%; max-width: 250px; height: 250px;">
+                        <canvas id="adminHostelChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
             <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 class="card-title" style="margin-bottom: 0;">All Booking Requests</h3>
+                    <div style="display: flex; gap: 15px; align-items: center;">
+                        <div style="position: relative;">
+                            <span style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                                    <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"/>
+                                </svg>
+                            </span>
+                            <input type="text" ng-model="searchQuery" placeholder="Search by name, room, etc..." autocomplete="off"
+                                style="padding: 10px 12px 10px 35px !important; border: 1px solid #d1d5db !important; border-radius: 8px !important; font-size: 0.95rem !important; outline: none !important; width: 320px !important; min-width: 320px !important; box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important; box-sizing: border-box !important;"
+                                onfocus="this.style.borderColor='#4f46e5'; this.style.boxShadow='0 0 0 3px rgba(79, 70, 229, 0.2)'"
+                                onblur="this.style.borderColor='#d1d5db'; this.style.boxShadow='0 1px 3px rgba(0,0,0,0.05)'">
+                        </div>
+                        
+                        <select ng-model="filterStatus"
+                            style="padding: 10px 35px 10px 15px; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 0.9rem; outline: none; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); appearance: none; background: url('data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'12\' height=\'12\' fill=\'%236b7280\' viewBox=\'0 0 16 16\'%3E%3Cpath d=\'M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z\'/%3E%3C/svg%3E') no-repeat right 15px center; background-color: white; cursor: pointer; transition: border-color 0.2s ease;"
+                            onfocus="this.style.borderColor='#4f46e5'"
+                            onblur="this.style.borderColor='#e5e7eb'">
+                            <option value="">All Status</option>
+                            <option value="Pending">Pending</option>
+                            <option value="Approved">Approved</option>
+                            <option value="Rejected">Rejected</option>
+                        </select>
+                    </div>
+                </div>
                 <div class="table-responsive">
                     <table>
                         <thead>
@@ -40,7 +91,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="b in bookings">
+                            <tr ng-repeat="b in bookings | filter:searchQuery | filter:(filterStatus ? {status: filterStatus} : undefined)">
                                 <td>{{ b.student_name }}</td>
                                 <td>{{ b.email }}</td>
                                 <td>{{ b.hostel_name }}</td>

@@ -1,0 +1,73 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">Student Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/student/dashboard">Overview</a></li>
+            <li><a href="#!/student/rooms">Room Allocation</a></li>
+            <li><a href="#!/student/mess/menu">Mess Menu</a></li>
+            <li><a href="#!/student/complaints">Complaints</a></li>
+            <li><a href="#!/student/outings">Outings</a></li>
+            <li><a href="#!/student/maintenance" class="active">Maintenance</a></li>
+            <li><a href="#!/student/records">My Records</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Maintenance Requests</span>
+            </div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="grid grid-cols-2">
+                <div class="card">
+                    <h3 class="card-title">Log Maintenance Request</h3>
+                    <div class="alert alert-danger" ng-if="errorMsg">{{ errorMsg }}</div>
+                    <div class="alert alert-success" ng-if="successMsg">{{ successMsg }}</div>
+
+                    <form ng-submit="submitMaintenance()">
+                        <div class="form-group">
+                            <label>Item to Fix (e.g. AC, Window, Bed)</label>
+                            <input type="text" class="form-control" ng-model="maintenanceData.item_to_fix" required
+                                placeholder="What needs fixing?">
+                        </div>
+                        <div class="form-group">
+                            <label>Detailed Description</label>
+                            <textarea class="form-control" rows="4" ng-model="maintenanceData.description" required
+                                placeholder="Explain the exact issue, room details, etc."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" ng-disabled="loading">Submit Request</button>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h3 class="card-title">My Maintenance Requests</h3>
+                    <div style="max-height: 500px; overflow-y: auto;">
+                        <div ng-repeat="m in myMaintenance"
+                            style="border-bottom: 1px solid #e5e7eb; padding-bottom: 15px; margin-bottom: 15px;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 5px;">
+                                <strong style="font-size: 1.05rem;">{{ m.item_to_fix }}</strong>
+                                <span class="badge"
+                                    ng-class="{'badge-warning': m.status === 'Pending', 'badge-primary': m.status === 'In Progress', 'badge-success': m.status === 'Resolved'}">
+                                    {{ m.status }}
+                                </span>
+                            </div>
+                            <p style="font-size: 0.85rem; color: #6b7280; margin-bottom: 8px;">
+                                {{ m.created_at | date:'medium' }}
+                            </p>
+                            <p style="font-size: 0.95rem;">{{ m.description }}</p>
+                        </div>
+                        <div ng-if="myMaintenance.length === 0">
+                            <p style="color:#6b7280">You have no maintenance requests logged.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

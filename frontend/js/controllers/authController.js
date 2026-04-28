@@ -3,8 +3,7 @@ app.controller('AuthController', function ($scope, $location, authService) {
     // Redirect if already logged in
     var user = authService.getUser();
     if (user) {
-        if (user.role === 'Admin') $location.path('/admin/dashboard');
-        else if (user.role === 'Warden') $location.path('/warden/dashboard');
+        if (user.role === 'Admin' || user.role === 'Warden') $location.path('/admin/dashboard');
         else if (user.role === 'Mess Owner') $location.path('/mess-owner/dashboard');
         else $location.path('/student/dashboard');
     }
@@ -24,10 +23,8 @@ app.controller('AuthController', function ($scope, $location, authService) {
             authService.saveToken(res.data.token);
             authService.saveUser(res.data.user);
 
-            if (res.data.user.role === 'Admin') {
+            if (res.data.user.role === 'Admin' || res.data.user.role === 'Warden') {
                 $location.path('/admin/dashboard');
-            } else if (res.data.user.role === 'Warden') {
-                $location.path('/warden/dashboard');
             } else if (res.data.user.role === 'Mess Owner') {
                 $location.path('/mess-owner/dashboard');
             } else {

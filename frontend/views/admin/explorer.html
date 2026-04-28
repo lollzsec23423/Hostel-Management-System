@@ -1,0 +1,86 @@
+<div class="dashboard-layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3>
+            <p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer" class="active">Data Explorer</a></li>
+            <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students">Manage Students</a></li>
+            <li><a href="#!/admin/discipline">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance">Maintenance</a></li>
+            <li><a href="#!/admin/damages">Property Damages</a></li>
+        </ul>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info">
+                <span>Advanced Data Explorer</span>
+            </div>
+            <button class="btn" style="background-color: var(--text-muted); width: auto; padding: 0.5rem 1.5rem;" onclick="window.history.back()">Back</button>
+        </header>
+
+        <div class="content-area">
+            <div class="card">
+                <h3 class="card-title">Run Custom SQL Query</h3>
+                <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 15px;">Execute raw SQL queries to aggregate, view, or filter any module's data across the entire platform.</p>
+                
+                <div style="margin-bottom: 15px; display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn" style="background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 20px;" ng-click="setQuery('SELECT * FROM users')">All Users</button>
+                    <button class="btn" style="background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 20px;" ng-click="setQuery('SELECT role, COUNT(*) as Total FROM users GROUP BY role')">Users by Role</button>
+                    <button class="btn" style="background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 20px;" ng-click="setQuery('SELECT * FROM rooms')">All Rooms</button>
+                    <button class="btn" style="background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 20px;" ng-click="setQuery('SELECT status, COUNT(*) as Total FROM complaints GROUP BY status')">Complaint Stats</button>
+                    <button class="btn" style="background-color: #f3f4f6; color: #374151; border: 1px solid #d1d5db; width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; border-radius: 20px;" ng-click="setQuery('SELECT status, COUNT(*) as Total FROM maintenance_requests GROUP BY status')">Maintenance Stats</button>
+                </div>
+
+                <form ng-submit="executeQuery()" style="margin-bottom: 20px;">
+                    <div class="form-group">
+                        <textarea ng-model="sqlQuery" rows="4" class="form-control" style="font-family: monospace; font-size: 1.1rem; background-color: #1e1e1e; color: #d4d4d4; padding: 15px;" placeholder="SELECT * FROM table_name WHERE condition..."></textarea>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.6rem 1.5rem;" ng-disabled="loading">
+                            <span ng-if="!loading">Execute Query</span>
+                            <span ng-if="loading">Executing...</span>
+                        </button>
+                        <button type="button" class="btn" style="background-color: #ef4444; width: auto; padding: 0.6rem 1.5rem;" ng-click="sqlQuery=''" ng-disabled="loading">Clear Input</button>
+                    </div>
+                </form>
+
+                <div ng-if="errorMsg" class="alert alert-danger" style="background-color: #fee2e2; color: #b91c1c; padding: 10px; margin-bottom: 15px; border-radius: 5px;">
+                    <strong>Error:</strong> {{ errorMsg }}
+                </div>
+            </div>
+
+            <div class="card" ng-if="queryResults" style="margin-top: 20px;">
+                <h3 class="card-title">Results ({{ queryResults.length }} rows)</h3>
+                
+                <div style="overflow-x: auto;" ng-if="queryResults.length > 0">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th ng-repeat="col in resultColumns">{{ col }}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in queryResults track by $index">
+                                <td ng-repeat="col in resultColumns">{{ row[col] === null ? 'NULL' : row[col] }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div ng-if="queryResults.length === 0" style="padding: 20px; text-align: center; color: #6b7280;">
+                    No rows returned.
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

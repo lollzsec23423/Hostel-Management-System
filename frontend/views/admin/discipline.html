@@ -1,0 +1,102 @@
+<div class="dashboard-layout">
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h3>SVKM NMIMS</h3><p style="font-size: 0.8rem; color: #a0a0b5; margin-top: 5px;">{{ currentUser.role }} Dashboard</p>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#!/admin/dashboard">Overview</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/explorer">Data Explorer</a></li>
+            <li><a href="#!/admin/hostels">Hostels & Rooms</a></li>
+            <li><a href="#!/admin/bookings">Room Bookings</a></li>
+            <li ng-if="currentUser.role === 'Admin'"><a href="#!/admin/mess">Mess Management</a></li>
+            <li><a href="#!/admin/complaints">Complaints</a></li>
+            <li><a href="#!/admin/outings">Outings</a></li>
+            <li><a href="#!/admin/students">Manage Students</a></li>
+            <li><a href="#!/admin/discipline" class="active">Discipline (DC)</a></li>
+            <li><a href="#!/admin/maintenance">Maintenance</a></li>
+            <li><a href="#!/admin/damages">Property Damages</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="user-info"><span>Disciplinary Cases Management</span></div>
+            <button class="logout-btn" ng-click="logout()">Logout</button>
+        </header>
+
+        <div class="content-area">
+            <div class="grid grid-cols-2" style="align-items:start; margin-bottom: 20px; gap: 20px;">
+                <div class="card" style="margin: 0;">
+                    <h3 class="card-title">Log New Disciplinary Case</h3>
+                    <form ng-submit="addCase()">
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Student</label>
+                            <select class="form-control" ng-model="newCase.student_id" ng-options="s.id as s.name + ' (' + s.email + ')' for s in students" required>
+                                <option value="">-- Select Student --</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Reason for Misconduct</label>
+                            <textarea class="form-control" ng-model="newCase.reason" rows="3" required></textarea>
+                        </div>
+                        <div class="form-group" style="margin-bottom:15px;">
+                            <label>Action Taken</label>
+                            <select class="form-control" ng-model="newCase.action_taken" required>
+                                <option value="Warning">Warning</option>
+                                <option value="Fine">Fine</option>
+                                <option value="Suspension">Suspension</option>
+                                <option value="YB">Year Back (YB)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width:100%">Log Case</button>
+                    </form>
+                </div>
+
+                <div class="card" style="display: flex; flex-direction: column; align-items: center; padding: 20px; margin: 0; height: 100%;">
+                    <h3 style="font-size: 1rem; color: #4b5563; margin-bottom: 15px; align-self: flex-start;">Cases by Action</h3>
+                    <div style="position: relative; width: 100%; max-width: 300px; height: 250px; margin: auto;">
+                        <canvas id="dcChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                    <h3 class="card-title">Recent Cases</h3>
+                    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.9rem;">
+                        <thead>
+                            <tr style="border-bottom: 1px solid #e5e7eb;">
+                                <th style="padding: 10px;">Date</th>
+                                <th style="padding: 10px;">Student</th>
+                                <th style="padding: 10px;">Action</th>
+                                <th style="padding: 10px;"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="c in cases" style="border-bottom: 1px solid #e5e7eb;">
+                                <td style="padding: 10px;">{{c.created_at | date:'mediumDate'}}</td>
+                                <td style="padding: 10px; font-weight: 500;">
+                                    {{c.student_name}}<br/>
+                                    <span style="font-weight: 400; color:#6b7280; font-size: 0.8rem;">Reason: {{c.reason}}</span>
+                                </td>
+                                <td style="padding: 10px;">
+                                    <span style="padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 0.8rem;"
+                                          ng-class="{
+                                              'bg-yellow-100 text-yellow-800': c.action_taken === 'Warning',
+                                              'bg-blue-100 text-blue-800': c.action_taken === 'Fine',
+                                              'bg-red-100 text-red-800': c.action_taken === 'Suspension',
+                                              'bg-gray-800 text-white': c.action_taken === 'YB'
+                                          }">
+                                        {{c.action_taken}}
+                                    </span>
+                                </td>
+                                <td style="padding: 10px; text-align:right;">
+                                    <button class="btn" style="background:#ef4444; padding:4px 8px; font-size:0.8rem;" ng-click="deleteCase(c.id)">Del</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
