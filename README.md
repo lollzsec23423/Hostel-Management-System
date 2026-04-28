@@ -83,16 +83,6 @@ DB_NAME=svkm_hostel_db
 node server.js
 ```
 
----
-
-## 📸 Screenshots
-
-<img width="1280" height="800" alt="image" src="https://github.com/user-attachments/assets/da75ec4e-7dae-4a6c-9cb0-b18b79476f23" />
-<img width="1280" height="982" alt="image" src="https://github.com/user-attachments/assets/f47121c6-d6e9-472b-a99f-6bf883c5852e" />
-
-
----
-
 ## 🎯 Purpose
 
 This project is built to replace manual hostel management systems with a digital solution that is faster, organized, and user-friendly.
